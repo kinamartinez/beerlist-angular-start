@@ -65,6 +65,10 @@ app.put('/beers/:id', function(req, res, next) {
         }
     });
 });
+
+//New comments: testing client side
+
+
 // app.get('/beers', function (req, res) {
 //  res.json({
 //      beers: [{
