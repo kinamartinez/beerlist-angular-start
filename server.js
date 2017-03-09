@@ -13,17 +13,11 @@ app.use(express.static('node_modules'));
 
 var Beer = require("./models/BeerModel");
 
-// app.post('/beers', function (req, res, next) {
-//     console.log(req.body); //the data on a new book
-//     res.send("From server route");
-// });
 
 app.post('/beers', function(req, res, next) {
-    var beer = new Beer(req.body);
-
-    beer.save(function(err, beer) {
+    Beer.create(req.body, function(err, beer) {
         if (err) {
-            console.error(err)
+            console.error(err);
             return next(err);
         } else {
             res.json(beer);
@@ -47,6 +41,30 @@ app.get('/beers', function (req, res, next) {
 
 });
 
+app.delete('/beers/:id', function(req, res, next) {
+    Beer.remove({ _id: req.params.id }, function(err) {
+        if (err) {
+            console.error(err);
+            return next(err);
+        } else {
+            res.send("Beer Deleted");
+        }
+    });
+});
+
+app.put('/beers/:id', function(req, res, next) {
+    Beer.findOneAndUpdate({ _id: req.params.id }, req.body, function(err, beer) {
+        if (err) {
+            console.error(err);
+            return next(err);
+        } else {
+            console.log(req.body);
+
+            console.log(beer);
+            res.send(beer);
+        }
+    });
+});
 // app.get('/beers', function (req, res) {
 //  res.json({
 //      beers: [{
@@ -73,6 +91,23 @@ app.listen(8000, function () {
 
 //var request = require('request');
 
+// app.post('/beers', function (req, res, next) {
+//     console.log(req.body); //the data on a new book
+//     res.send("From server route");
+// });
+//
+// app.post('/beers', function(req, res, next) {
+//     var beer = new Beer(req.body);
+//
+//     beer.save(function(err, beer) {
+//         if (err) {
+//             console.error(err);
+//             return next(err);
+//         } else {
+//             res.json(beer);
+//         }
+//     });
+// });
 
 
 
