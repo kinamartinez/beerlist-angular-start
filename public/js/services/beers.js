@@ -1,81 +1,109 @@
+app.service('beersService', function ($http) {
+        var beers = [];
+
+        var getBeers = function () {
+            return $http.get('/beers')
+                .then(function (response) {
+                    angular.copy(response.data, beers);
+                    console.log(beers)
+                }, function (err) {
+                    console.error(err)
+                });
+        };
 
 
-app.service('beersService', function () {
-    var beers = [
-        {
-            name: "Guinness",
-            style: "Stout",
-            abv: "4.2%",
-            image: "https://cdn.beeradvocate.com/im/beers/754.jpg",
-            rating: [],
-            avRate: 0
-
-        },
-        {
-            name: "Club Colombia",
-            style: "Pale Lager",
-            abv: "4.7%",
-            image: "http://cervezafresca.com/wp-content/uploads/2010/05/cerveza-club-colombia.jpg",
-            rating: [],
-            avRate: 0
-        },
-
-        {
-            name: "Corona",
-            style: "Pale Lager",
-            abv: "4.5%",
-            image: "http://www.lcbo.com/content/dam/lcbo/products/186510.jpg/jcr:content/renditions/cq5dam.web.1280.1280.jpeg",
-            rating: [],
-            avRate: 0
-        },
+        var addBeer = function (newBeer) {
+            $http.post('/beers', newBeer)
+                .then(function (response) {
+                    console.log(response);
+                    getBeers()
+                }, function (err) {
+                    console.error(err)
+                })
+        };
 
 
-        {
-            name: "Leffe",
-            style: "Pale Ale",
-            abv: "6,6%",
-            image: "http://www.beerbible.net/beerpics/cpmxber2.jpg",
-            rating: [],
-            avRate: 0
-        }
+        var removeBeer = function (id) {
+            $http.delete('/beers/' + id)
+                .then(function () {
+                    getBeers()
+                })
+        };
 
-    ];
 
-    var addBeer = function (newBeer) {
-        beers.push(newBeer);
-        console.log(beers)
-    };
+        var rate = function (beer, value) {
+            beer = angular.copy(beer);
+            beer.rating.push(value);
+            $http.put('/beers/' + beer._id, beer)
+                .then(function () {
+                        getBeers()
 
-    var removeBeer = function ($index) {
-        beers.splice($index, 1);
-    };
+                    },
+                    function (err) {
+                        console.error(err)
+                    });
 
-    var rating = function ($index, value) {
-        console.log($index, value);
-        beers[$index].rating.push(value);
-        console.log(beers);
-        getRate($index)
-    };
 
-    var getRate = function ($index) {
-        var total = 0;
-        console.log("hey");
-        for (var i = 0; i < beers[$index].rating.length; i++) {
+        };
 
-            total += beers[$index].rating[i];
-            console.log(total);
-        }
-        beers[$index].avRate = (total / beers[$index].rating.length).toFixed(2);
-        console.log(beers[$index].avRate);
+        var edit = function (beer) {
+            $http.put('/beers/' + beer._id, beer)
+                .then(function () {
+                    getBeers()
+                }, function (err) {
+                    console.error(err)
+                })
+        };
 
-    };
+        var tempObj = {
+            addBeer: addBeer,
+            beers: beers,
+            removeBeer: removeBeer,
+            rate: rate,
+            getBeers: getBeers,
+            edit: edit
+        };
 
-       return {
-        addBeer: addBeer,
-        beers: beers,
-        removeBeer: removeBeer,
-        rating: rating,
-        getRate: getRate,
-        }
+        return tempObj;
 
-});
+    }
+)
+;
+
+
+// {
+//     name: "Guinness",
+//     style: "Stout",
+//     abv: "4.2%",
+//     image: "https://cdn.beeradvocate.com/im/beers/754.jpg",
+//     rating: [],
+//     avRate: 0
+//
+// },
+// {
+//     name: "Club Colombia",
+//     style: "Pale Lager",
+//     abv: "4.7%",
+//     image: "http://cervezafresca.com/wp-content/uploads/2010/05/cerveza-club-colombia.jpg",
+//     rating: [],
+//     avRate: 0
+// },
+//
+// {
+//     name: "Corona",
+//     style: "Pale Lager",
+//     abv: "4.5%",
+//     image: "http://www.lcbo.com/content/dam/lcbo/products/186510.jpg/jcr:content/renditions/cq5dam.web.1280.1280.jpeg",
+//     rating: [],
+//     avRate: 0
+// },
+//
+//
+// {
+//     name: "Leffe",
+//     style: "Pale Ale",
+//     abv: "6,6%",
+//     image: "http://www.beerbible.net/beerpics/cpmxber2.jpg",
+//     rating: [],
+//     avRate: 0
+// }

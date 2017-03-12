@@ -10,7 +10,7 @@ var beersCollectionSchema = new Schema({
     name:{type: String},
     style:{type: String},
     abv: {type: Number},
-    image_url: {type: String},
+    image: {type: String},
     rating: [{type: Number}],
     avRate: {type: Number},
 });

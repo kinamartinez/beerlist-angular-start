@@ -13,9 +13,24 @@ app.use(express.static('node_modules'));
 
 var Beer = require("./models/BeerModel");
 
+app.get('/beers', function (req, res, next) {
+    Beer.find(function (error, beers) {
+        if (error) {
+            console.error(error);
+            return next(error);
+        }
+        else {
+            console.log(typeof beers);
+            console.log(beers);
+            res.send(beers);
+        }
 
-app.post('/beers', function(req, res, next) {
-    Beer.create(req.body, function(err, beer) {
+    });
+
+});
+
+app.post('/beers', function (req, res, next) {
+    Beer.create(req.body, function (err, beer) {
         if (err) {
             console.error(err);
             return next(err);
@@ -25,24 +40,11 @@ app.post('/beers', function(req, res, next) {
     });
 });
 
-app.get('/beers', function (req, res, next) {
-   Beer.find(function (error, beers) {
-      if (error) {
-       console.error(error);
-          return next(error);
-      }
-      else {
-          console.log(typeof beers);
-          console.log(beers);
-          res.send(beers);
-      }
 
-  });
+app.delete('/beers/:id', function (req, res, next) {
 
-});
-
-app.delete('/beers/:id', function(req, res, next) {
-    Beer.remove({ _id: req.params.id }, function(err) {
+    console.log(req.params.id);
+    Beer.remove({_id: req.params.id}, function (err) {
         if (err) {
             console.error(err);
             return next(err);
@@ -52,40 +54,55 @@ app.delete('/beers/:id', function(req, res, next) {
     });
 });
 
-app.put('/beers/:id', function(req, res, next) {
-    Beer.findOneAndUpdate({ _id: req.params.id }, req.body, function(err, beer) {
+
+var getRate = function (rating) {
+    var total = 0;
+    var average;
+    for (var i = 0; i < rating.length; i++) {
+
+        total += rating[i];
+        console.log(total);
+    }
+    average = (total / rating.length);
+    return average
+
+};
+
+
+app.put('/beers/:id', function (req, res, next) {
+    var beer = req.body;
+    beer.avRate = getRate(beer.rating);
+    Beer.findOneAndUpdate({_id: req.params.id}, beer, {new: true}, function (err, beer) {
         if (err) {
             console.error(err);
             return next(err);
         } else {
-            console.log(req.body);
 
-            console.log(beer);
             res.send(beer);
         }
     });
+
+
 });
 
-//New comments: testing client side
 
+// error handler to catch 404 and forward to main error handler
+app.use(function (req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
 
-// app.get('/beers', function (req, res) {
-//  res.json({
-//      beers: [{
-//          name: '512 IPA',
-//          style: 'IPA',
-//          image_url: 'http://bit.ly/1XtmB4d',
-//          abv: 5
-//      }, {
-//          name: '512 Pecan Porter',
-//          style: 'Porter',
-//          image_url: 'http://bit.ly/1Vk5xj4',
-//          abv: 4
-//      }]
-//  });
-//
-//    res.send("im working")
-// });
+// main error handler
+// warning - not for use in production code!
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: err
+    });
+});
+
 
 app.listen(8000, function () {
     console.log("Fullstack project. Listening on 8000.")
@@ -93,25 +110,6 @@ app.listen(8000, function () {
 });
 
 
-//var request = require('request');
-
-// app.post('/beers', function (req, res, next) {
-//     console.log(req.body); //the data on a new book
-//     res.send("From server route");
-// });
-//
-// app.post('/beers', function(req, res, next) {
-//     var beer = new Beer(req.body);
-//
-//     beer.save(function(err, beer) {
-//         if (err) {
-//             console.error(err);
-//             return next(err);
-//         } else {
-//             res.json(beer);
-//         }
-//     });
-// });
 
 
 

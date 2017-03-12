@@ -2,17 +2,15 @@ app.controller("mainCtrl", ["$scope", "beersService", function ($scope, beersSer
     "use strict";
     $scope.addBeer = beersService.addBeer;
 
+    beersService.getBeers();
+
+    $scope.edit = beersService.edit;
+
     $scope.beers = beersService.beers;
 
     $scope.removeBeer = beersService.removeBeer;
 
-    $scope.rating = beersService.rating;
-
-    $scope.getRate = beersService.getRate;
-
-    $scope.avg = beersService.avg;
-
-    $scope.addAverRate = beersService.addAverRate;
+    $scope.rate = beersService.rate;
 
     $scope.addBeer = function() {
         var newBeer = {
@@ -21,7 +19,7 @@ app.controller("mainCtrl", ["$scope", "beersService", function ($scope, beersSer
             abv: $scope.abv,
             image: $scope.image,
             ratings: [],
-            averageRating: 0
+            avRate: 0
         };
         beersService.addBeer(newBeer);
     }

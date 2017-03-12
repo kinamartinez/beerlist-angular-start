@@ -72,6 +72,10 @@ h1{
     color: whitesmoke;
 }
 h3{
-    color: white;
+    color: Black;
 alignment: right;
+}
+
+.formBlur{
+    border: none;
 }
