@@ -1,38 +1,35 @@
 app.service('beersService', function ($http) {
-        var beers = [];
+  var beersService ={};
 
-        var getBeers = function () {
+        beersService.getBeers = function () {
             return $http.get('/beers')
                 .then(function (response) {
-                    angular.copy(response.data, beers);
-                    console.log(beers)
+                    return response.data
                 }, function (err) {
                     console.error(err)
                 });
         };
 
 
-        var addBeer = function (newBeer) {
+        beersService.addBeer = function (newBeer) {
             $http.post('/beers', newBeer)
                 .then(function (response) {
-                    console.log(response);
-                    getBeers()
+                    return response.data
                 }, function (err) {
                     console.error(err)
                 })
         };
 
 
-        var removeBeer = function (id) {
+       beersService.removeBeer = function (id) {
             $http.delete('/beers/' + id)
-                .then(function () {
-                    getBeers()
+                .then(function (response) {
+                    return response.data
                 })
         };
 
 
         var rate = function (beer, value) {
-            beer = angular.copy(beer);
             beer.rating.push(value);
             $http.put('/beers/' + beer._id, beer)
                 .then(function () {
@@ -48,23 +45,13 @@ app.service('beersService', function ($http) {
 
         var edit = function (beer) {
             $http.put('/beers/' + beer._id, beer)
-                .then(function () {
-                    getBeers()
+                .then(function (response) {
+                    return response.data
                 }, function (err) {
                     console.error(err)
                 })
         };
 
-        var tempObj = {
-            addBeer: addBeer,
-            beers: beers,
-            removeBeer: removeBeer,
-            rate: rate,
-            getBeers: getBeers,
-            edit: edit
-        };
-
-        return tempObj;
 
     }
 )

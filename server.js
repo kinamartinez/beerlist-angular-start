@@ -35,7 +35,7 @@ app.post('/beers', function (req, res, next) {
             console.error(err);
             return next(err);
         } else {
-            res.json(beer);
+            res.send(beer);
         }
     });
 });
