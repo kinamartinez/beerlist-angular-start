@@ -8,8 +8,6 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.use(express.static('public'));
-app.use(express.static('node_modules'));
 
 var Beer = require("./models/BeerModel");
 
@@ -62,10 +60,13 @@ var getRate = function (rating) {
 
         total += rating[i];
         console.log(total);
+    } if (rating.length >0) {
+        average = (total / rating.length);
+        return average
     }
-    average = (total / rating.length);
-    return average
-
+    else {
+        return 0
+    }
 };
 
 
@@ -85,6 +86,8 @@ app.put('/beers/:id', function (req, res, next) {
 
 });
 
+app.use(express.static('public'));
+app.use(express.static('node_modules'));
 
 // error handler to catch 404 and forward to main error handler
 app.use(function (req, res, next) {
@@ -97,7 +100,7 @@ app.use(function (req, res, next) {
 // warning - not for use in production code!
 app.use(function (err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    res.send({
         message: err.message,
         error: err
     });

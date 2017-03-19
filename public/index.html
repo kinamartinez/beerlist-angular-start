@@ -59,7 +59,7 @@
                         <p> Alcohol by Volume: {{beer.abv}}</p>
                         <p>Beer Style: <input ng-model = "beer.style" class = "formBlur" ng-blur = "edit(beer)"/> </p>
                         <p> Average rating: {{beer.avRate.toFixed(2)}}</p>
-                        <p><a href="#" class="btn btn-primary" ng-click="removeBeer(beer._id)" role="button">Remove</a>
+                        <p><a href="#" class="btn btn-primary" ng-click="removeBeer($index)" role="button">Remove</a>
                         </p>
 
                     </div>
