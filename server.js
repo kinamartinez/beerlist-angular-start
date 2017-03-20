@@ -26,6 +26,25 @@ app.get('/beers', function (req, res, next) {
     });
 
 });
+app.post('/beers/:id/reviews', function (req, res, next) {
+    Beer.findById(req.params.id, function (err, foundBeer) {
+        if (err) {
+            console.error(err);
+            return next(err);
+        } else if (!foundBeer) {
+            return res.send("Error! No beer found with that ID");
+        } else {
+            foundBeer.reviews.push(req.body);
+            foundBeer.save(function (err, updatedBeer) {
+                if (err) {
+                    return next(err);
+                } else {
+                    res.send(updatedBeer);
+                }
+            });
+        }
+    });
+});
 
 app.post('/beers', function (req, res, next) {
     Beer.create(req.body, function (err, beer) {
@@ -38,6 +57,29 @@ app.post('/beers', function (req, res, next) {
     });
 });
 
+app.delete('/beers/:beerid/reviews/:reviewid', function(req, res, next) {
+    Beer.findById(req.params.beerid, function(err, foundBeer) {
+        if (err) {
+            return next(err);
+        } else if (!foundBeer) {
+            return res.send("Error! No beer found with that ID");
+        } else {
+            var reviewToDelete = foundBeer.reviews.id(req.params.reviewid);
+            if (reviewToDelete) {
+                reviewToDelete.remove();
+                foundBeer.save(function(err, updatedBeer) {
+                    if (err) {
+                        return next(err);
+                    } else {
+                        res.send(updatedBeer);
+                    }
+                });
+            } else {
+                return res.send("Error! No review found with that ID");
+            }
+        }
+    });
+});
 
 app.delete('/beers/:id', function (req, res, next) {
     Beer.remove({_id: req.params.id}, function (err) {
@@ -57,7 +99,8 @@ var getRate = function (rating) {
     for (var i = 0; i < rating.length; i++) {
 
         total += rating[i];
-    } if (rating.length >0) {
+    }
+    if (rating.length > 0) {
         average = (total / rating.length);
         return average
     }

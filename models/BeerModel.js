@@ -12,7 +12,13 @@ var beersCollectionSchema = new Schema({
     abv: {type: Number},
     image: {type: String},
     rating: [{type: Number}],
-    avRate: {type: Number}
+    avRate: {type: Number},
+    reviews: [reviewSchema]
+   });
+
+var reviewSchema = new Schema({
+    name: String,
+    text: String
 });
 
 var Beer = mongoose.model('BeerModel', beersCollectionSchema);
