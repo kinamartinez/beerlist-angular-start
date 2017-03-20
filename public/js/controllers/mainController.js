@@ -1,6 +1,43 @@
 app.controller("mainCtrl", ["$scope", "beersService", function ($scope, beersService) {
     "use strict";
 
+    var beerCopy;
+    $scope.editBeer = function (beer) {
+        this.enabled = true;
+        beerCopy = angular.copy(beer);
+    };
+
+    var restore = function (beerCopy) {
+        console.log(beerCopy);
+        var currentBeerId;
+
+        for (var i = 0; i < $scope.beers.length; i++) {
+            currentBeerId = $scope.beers[i]._id;
+
+            if (beerCopy._id == currentBeerId) {
+                break;
+            }
+        }
+
+
+        $scope.beers[i] = beerCopy;
+    };
+
+    $scope.cancel = function () {
+        this.enabled = false;
+       // restore(beerCopy)
+    };
+
+
+    $scope.updateBeer = function (beer) {
+
+        beersService.updateBeer(beer).catch(function () {
+            restore(beerCopy);
+            console.log(beerCopy)
+
+        })
+    };
+
     beersService.getBeers().then(function (beers) {
         //beers como parametro es el array que creamos en el server, y la respuesta que se da
         //luego en el service, ademas con la siguiente expression, creamos un mirror que nos va a cambiar tambien el view
@@ -14,7 +51,6 @@ app.controller("mainCtrl", ["$scope", "beersService", function ($scope, beersSer
 
         })
     };
-
 
 
     $scope.beers = beersService.beers;
@@ -43,4 +79,5 @@ app.controller("mainCtrl", ["$scope", "beersService", function ($scope, beersSer
             $scope.beers.push(beer);
         });
     }
-}]);
+}])
+;

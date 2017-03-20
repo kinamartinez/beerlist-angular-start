@@ -40,8 +40,6 @@ app.post('/beers', function (req, res, next) {
 
 
 app.delete('/beers/:id', function (req, res, next) {
-
-    console.log(req.params.id);
     Beer.remove({_id: req.params.id}, function (err) {
         if (err) {
             console.error(err);
@@ -59,7 +57,6 @@ var getRate = function (rating) {
     for (var i = 0; i < rating.length; i++) {
 
         total += rating[i];
-        console.log(total);
     } if (rating.length >0) {
         average = (total / rating.length);
         return average
@@ -73,7 +70,7 @@ var getRate = function (rating) {
 app.put('/beers/:id', function (req, res, next) {
     var beer = req.body;
     beer.avRate = getRate(beer.rating);
-    Beer.findOneAndUpdate({_id: req.params.id}, beer, {new: true}, function (err, beer) {
+    Beer.findByIdAndUpdate({_id: req.params.id}, beer, {new: true}, function (err, beer) {
         if (err) {
             console.error(err);
             return next(err);

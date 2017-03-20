@@ -47,8 +47,17 @@ app.service('beersService', function ($http) {
                 .then(function (response) {
                     return response.data
                 }, function (err) {
-                    console.error(err)
+                    alert(err.data.message)
                 })
+        };
+
+        beersService.updateBeer = function (beer) {
+            return $http.put('/beers/' + beer._id, beer)
+                .then(function (response) {
+                    return response.data
+                },function (err) {
+                    alert(err.data.message)
+                });
         };
 
         return beersService
