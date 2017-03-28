@@ -6,6 +6,11 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var reviewSchema = new Schema({
+    name: {type: String},
+    text: {type: String}
+});
+
 var beersCollectionSchema = new Schema({
     name:{type: String},
     style:{type: String},
@@ -16,10 +21,6 @@ var beersCollectionSchema = new Schema({
     reviews: [reviewSchema]
    });
 
-var reviewSchema = new Schema({
-    name: String,
-    text: String
-});
 
 var Beer = mongoose.model('BeerModel', beersCollectionSchema);
 module.exports = Beer;

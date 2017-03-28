@@ -1,140 +1,51 @@
 var express = require('express');
-var app = express();
-
+var session = require('express-session');
+var bodyParser = require('body-parser');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 var mongoose = require('mongoose');
+var beerRoutes = require('./routes/beerRoutes');
+var userRoutes = require('./routes/userRoutes');
+var User = require("./models/UserModel");
+
 mongoose.connect("mongodb://localhost/beers");
 
-var bodyParser = require('body-parser');
+var app = express();
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// Configure passport and session middleware
+app.use(session({ secret: 'thisIsASecret', resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Configure passport-local to use user model for authentication
+passport.use(User.createStrategy()); //Thanks to m-l-p there is no need to create a local strategy
+passport.serializeUser(User.serializeUser()); //also it helps here
+passport.deserializeUser(User.deserializeUser()); //and here
 
 
-var Beer = require("./models/BeerModel");
-
-app.get('/beers', function (req, res, next) {
-    Beer.find(function (error, beers) {
-        if (error) {
-            console.error(error);
-            return next(error);
-        }
-        else {
-            console.log(typeof beers);
-            console.log(beers);
-            res.send(beers);
-        }
-
-    });
-
-});
-app.post('/beers/:id/reviews', function (req, res, next) {
-    Beer.findById(req.params.id, function (err, foundBeer) {
-        if (err) {
-            console.error(err);
-            return next(err);
-        } else if (!foundBeer) {
-            return res.send("Error! No beer found with that ID");
-        } else {
-            foundBeer.reviews.push(req.body);
-            foundBeer.save(function (err, updatedBeer) {
-                if (err) {
-                    return next(err);
-                } else {
-                    res.send(updatedBeer);
-                }
-            });
-        }
-    });
-});
-
-app.post('/beers', function (req, res, next) {
-    Beer.create(req.body, function (err, beer) {
-        if (err) {
-            console.error(err);
-            return next(err);
-        } else {
-            res.send(beer);
-        }
-    });
-});
-
-app.delete('/beers/:beerid/reviews/:reviewid', function(req, res, next) {
-    Beer.findById(req.params.beerid, function(err, foundBeer) {
-        if (err) {
-            return next(err);
-        } else if (!foundBeer) {
-            return res.send("Error! No beer found with that ID");
-        } else {
-            var reviewToDelete = foundBeer.reviews.id(req.params.reviewid);
-            if (reviewToDelete) {
-                reviewToDelete.remove();
-                foundBeer.save(function(err, updatedBeer) {
-                    if (err) {
-                        return next(err);
-                    } else {
-                        res.send(updatedBeer);
-                    }
-                });
-            } else {
-                return res.send("Error! No review found with that ID");
-            }
-        }
-    });
-});
-
-app.delete('/beers/:id', function (req, res, next) {
-    Beer.remove({_id: req.params.id}, function (err) {
-        if (err) {
-            console.error(err);
-            return next(err);
-        } else {
-            res.send("Beer Deleted");
-        }
-    });
-});
-
-
-var getRate = function (rating) {
-    var total = 0;
-    var average;
-    for (var i = 0; i < rating.length; i++) {
-
-        total += rating[i];
-    }
-    if (rating.length > 0) {
-        average = (total / rating.length);
-        return average
-    }
-    else {
-        return 0
-    }
-};
-
-
-app.put('/beers/:id', function (req, res, next) {
-    var beer = req.body;
-    beer.avRate = getRate(beer.rating);
-    Beer.findByIdAndUpdate({_id: req.params.id}, beer, {new: true}, function (err, beer) {
-        if (err) {
-            console.error(err);
-            return next(err);
-        } else {
-
-            res.send(beer);
-        }
-    });
-
-
-});
+//This tells the server that when a request comes into '/beers'
+//that it should use the routes in 'beerRoutes'
+//and those are in our new beerRoutes.js file
+app.use('/beers', beerRoutes);
+app.use('/users', userRoutes);
 
 app.use(express.static('public'));
 app.use(express.static('node_modules'));
 
-// error handler to catch 404 and forward to main error handler
-app.use(function (req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
+app.all('*', function(req, res) {
+    res.sendFile(__dirname + "/public/index.html")
 });
+
+// error handler to catch 404 and forward to main error handler
+// not needed as we have the above route
+// app.use(function(req, res, next) {
+//   var err = new Error('Not Found');
+//   err.status = 404;
+//   next(err);
+// });
+
 
 // main error handler
 // warning - not for use in production code!
@@ -146,10 +57,9 @@ app.use(function (err, req, res, next) {
     });
 });
 
-
+//start the server
 app.listen(8000, function () {
     console.log("Fullstack project. Listening on 8000.")
-
 });
 
 

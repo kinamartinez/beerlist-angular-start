@@ -25,7 +25,7 @@ app.controller("mainCtrl", ["$scope", "beersService", function ($scope, beersSer
 
     $scope.cancel = function () {
         this.enabled = false;
-       // restore(beerCopy)
+        // restore(beerCopy)
     };
 
 
@@ -52,7 +52,6 @@ app.controller("mainCtrl", ["$scope", "beersService", function ($scope, beersSer
         })
     };
 
-
     $scope.beers = beersService.beers;
 
     $scope.rate = beersService.rate;
@@ -64,7 +63,6 @@ app.controller("mainCtrl", ["$scope", "beersService", function ($scope, beersSer
 
         });
     };
-
 
     $scope.addBeer = function () {
         var newBeer = {
@@ -78,6 +76,6 @@ app.controller("mainCtrl", ["$scope", "beersService", function ($scope, beersSer
         beersService.addBeer(newBeer).then(function (beer) {
             $scope.beers.push(beer);
         });
-    }
-}])
-;
+    };
+
+}]);

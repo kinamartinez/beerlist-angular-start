@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1 class="text-center">BeerList</h1>
+            <div class="page-header">
+
+                <!-- render beers here -->
+
+                <form ng-submit="addBeer()" ng-hide="!currentUser.username">
+                    <h3>Add a new beer</h3>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Beer Name" ng-model="name"></input>
+
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Style" ng-model="style"></input>
+
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="ABV" ng-model="abv"></input>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Image URL" ng-model="image"></input>
+                    </div>
+                    <button type="button" class="btn btn-primary" ng-click="addBeer(newBeer)">Add</button>
+
+                </form>
+            </div>
+        </div>
+        <div class="row-list" ng-repeat="beer in beers" track by $index>
+
+            <div class="col-xs-4">
+                <!-- we don't want to display the beer whilst editing ***ng-if="!tempBeer[$index]"-->
+                <div class="thumbnail">
+
+                    <img class="pic" ng-src="{{beer.image}}" style="height:300px;" alt="...">
+                    <div class="caption">
+                        <h4><a class="btn btn-success float" ui-sref="beer({id: beer._id, beerParam: beer})">Reviews</a></h4>
+                        <h3 class="nameBeers"><input ng-model="beer.name" class="formBlur" ng-click="editBeer(beer)" ng-blur="cancel()"/></h3>
+
+                        <input class="star" type="checkbox"/>
+                        <label for="st1" ng-click="rate(beer, 5)"></label>
+                        <input class="star" type="checkbox"/>
+                        <label for="st2" ng-click="rate(beer, 4)"></label>
+                        <input class="star" type="checkbox">
+                        <label for="st3" ng-click="rate(beer, 3)"></label>
+                        <input class="star" type="checkbox"/>
+                        <label for="st4" ng-click="rate(beer, 2)"></label>
+                        <input class="star" type="checkbox"/>
+                        <label for="st5" ng-click="rate(beer, 1)"></label>
+
+                        <p> Alcohol by Volume: <input ng-model="beer.abv"   class="formBlur" ng-click="editBeer(beer)" ng-blur="cancel()"/></p>
+                        <p>Beer Style: <input ng-model="beer.style"   class="formBlur" ng-click="editBeer(beer)" ng-blur="cancel()"/></p>
+                        <p> Average rating: {{beer.avRate.toFixed(2)}}</p>
+
+                        <p><a class="btn btn-primary" ng-click="removeBeer($index)" role="button">Remove</a>
+                        <p><a class="btn btn-primary" ng-disabled="!enabled" ng-click="updateBeer(beer)" role="button">Save</a>
+                        </p>
+
+                        <!-- we want to display the form whilst editing **** ng-if="tempBeer[$index]"-->
+                        <!--<form >-->
+                        <!--&lt;!&ndash; all inputs are bound to the temporary beer &ndash;&gt;-->
+                        <!--<input type="text" ng-model="tempBeer[$index].name">-->
+                        <!--<input type="text" ng-model="tempBeer[$index].style">-->
+                        <!--<input type="text" ng-model="tempBeer[$index].abv">-->
+                        <!--&lt;!&ndash; if cancel is pressed, all we need to do is remove the tempBeer &ndash;&gt;-->
+                        <!--<button type="button" ng-click="tempBeer[$index] = null">Cancel</button>-->
+                        <!--<button type="button" ng-click="updateBeer($index)">Submit</button>-->
+                        <!--</form>-->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
