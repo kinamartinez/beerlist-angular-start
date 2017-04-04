@@ -88,7 +88,6 @@ app.listen(8000, function () {
 
 });
 
-
 //var request = require('request');
 
 // app.post('/beers', function (req, res, next) {
